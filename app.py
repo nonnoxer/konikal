@@ -23,6 +23,6 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def root():
-    return "Hello world!"
+    return render_template("page.html")
 
 app.run(debug=True)

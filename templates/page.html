@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Konikal</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png')}}">
+  </head>
+  <body onload="{{ error }}">
+    <header>
+      <div class="row">
+        <div class="col-1"></div>
+        <div class="col-7">
+          <a href="/" class="white"><img src="{{ url_for('static', filename='konikal.png')}}" height="80%"></a>
+        </div>
+        <div class="col-3 right">
+          {% if "user" in session %}
+            <p>Welcome, <a href="/user/{{ user }}" class="white"><u>{{ user}}</u></a>!
+            <a href="/logout"><button>Logout</button></a></p>
+          {% else %}
+            <a href="/login"><button>Login</button></a>
+            <a href="/signup"><button>Signup</button></a>
+          {% endif %}
+          <form action="/search">
+            <input type="text" name="search" placeholder="Search..." class="white form">
+            <button class="white"><i class="fa fa-search white"></i></button>
+          </form>
+        </div>
+        <div class="col-1"></div>
+      </div>
+    </header>
+    <article>
+      <br>
+      <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10 body">
+          <div class="row">
+            <div class="col-8">
+              <strong>Movies</strong>
+              {{ movies }}
+            </div>
+            <div class="col-2">
+              <strong>Ratings</strong>
+              {{ ratings }}
+            </div>
+          </div>
+        </div>
+        <div class="col-1"></div>
+      </div>
+    </article>
+    <footer>
+      <p>Made by <a href="https://github.com/nonnoxer">Natanael Tan</a></p>
+    </footer>
+  </body>
+</html>

@@ -25,4 +25,5 @@ db = scoped_session(sessionmaker(bind=engine))
 def root():
     return render_template("page.html")
 
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)

@@ -23,7 +23,15 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def root():
-    return render_template("page.html")
+    return render_template("page.html", body="Main page")
+
+@app.route("/login")
+def login():
+    return render_template("page.html", body="Login page")
+
+@app.route("/signup")
+def signup():
+    return render_template("page.html", body="Signup page")
 
 if __name__ == "__main__":
     app.run(debug=True)

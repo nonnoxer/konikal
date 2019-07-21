@@ -16,7 +16,7 @@
         </div>
         <div class="col-3 right">
           {% if "user" in session %}
-            <p>Welcome, <a href="/user/{{ user }}" class="white"><u>{{ user}}</u></a>!
+            <p>Welcome, <a href="/user/{{ user }}" class="white"><u>{{ user }}</u></a>!
             <a href="/logout"><button>Logout</button></a></p>
           {% else %}
             <a href="/login"><button>Login</button></a>
@@ -36,10 +36,12 @@
         <div class="col-1"></div>
         <div class="col-7 body">
           <strong>Body</strong>
+          {{ body }}
         </div>
         <div class="col-1"></div>
         <div class="col-2 body">
           <strong>Sidebar</strong>
+          {{ sidebar }}
         </div>
         <div class="col-1"></div>
       </div>

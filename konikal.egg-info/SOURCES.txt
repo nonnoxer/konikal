@@ -1,0 +1,10 @@
+MANIFEST.in
+README.md
+setup.py
+konikal/__init__.py
+konikal/konikal.py
+konikal.egg-info/PKG-INFO
+konikal.egg-info/SOURCES.txt
+konikal.egg-info/dependency_links.txt
+konikal.egg-info/requires.txt
+konikal.egg-info/top_level.txt

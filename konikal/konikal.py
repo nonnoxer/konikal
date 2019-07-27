@@ -1,2 +1,2 @@
 def create():
-    return "Yes I am"
+    print("Yes I am")

@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: konikal
-Version: 0.0.0
+Version: 0.0.1
 Summary: A website generator using Flask
 Home-page: https://github.com/nonnoxer/konikal
 Author: Natanael Tan

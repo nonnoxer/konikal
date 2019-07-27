@@ -1,1 +1,1 @@
-from . import konikal
+from konikal.konikal import *

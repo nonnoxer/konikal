@@ -1,1 +1,0 @@
-from konikal.konikal import *

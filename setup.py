@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='konikal',
     version='0.0.1',
-    packages=find_packages(exclude=['tests*']),
+    packages=find_packages(exclude=["files*"]),
     license='MIT',
     description='A website generator using Flask',
     long_description=open('README.md').read(),

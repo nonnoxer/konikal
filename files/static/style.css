@@ -1,0 +1,18 @@
+* {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+html, body {
+  height: 100%;
+}
+header {
+  height: 20%;
+}
+article {
+  height: 80%;
+}
+footer {
+  text-align: center;
+  height: 10%;
+}

@@ -3,7 +3,7 @@ import argparse
 from distutils.dir_util import copy_tree
 
 def create(path):
-    print("\t * Creating files at specified path...")
+    print(" * Creating files at specified path...")
     if os.path.exists(path):
         os.chdir(path)
         copy_tree(os.path.abspath(os.path.join(__file__, "..", "files")), ".")
@@ -19,7 +19,7 @@ def create(path):
                 exit()
             os.chdir(i)
         copy_tree(os.path.abspath(os.path.join(__file__, "..", "files")), ".")
-    print("\t * Done! Launch app.py and navigate to http://localhost:5000/admin to get started!")
+    print(" * Done! Launch app.py and navigate to http://localhost:5000/admin to get started!")
 
 
 

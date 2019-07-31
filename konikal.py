@@ -19,7 +19,7 @@ def create(path):
                 exit()
             os.chdir(i)
         copy_tree(os.path.abspath(os.path.join(__file__, "..", "files")), ".")
-        print("\t * Done! Launch app.py and navigate to http://localhost:5000/admin to get started!")
+    print("\t * Done! Launch app.py and navigate to http://localhost:5000/admin to get started!")
 
 
 

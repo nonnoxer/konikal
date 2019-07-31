@@ -8,6 +8,7 @@ html, body {
 }
 header {
   height: 20%;
+  background-color: #23282d;
 }
 article {
   height: 80%;
@@ -15,4 +16,5 @@ article {
 footer {
   text-align: center;
   height: 10%;
+  background-color: #dfdfdf;
 }

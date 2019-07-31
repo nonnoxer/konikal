@@ -2,7 +2,8 @@ import os
 import argparse
 from distutils.dir_util import copy_tree
 
-def rinse(path):
+def create(path):
+    print("\t * Creating files at specified path...")
     if os.path.exists(path):
         os.chdir(path)
         copy_tree(os.path.abspath(os.path.join(__file__, "..", "files")), ".")
@@ -18,11 +19,13 @@ def rinse(path):
                 exit()
             os.chdir(i)
         copy_tree(os.path.abspath(os.path.join(__file__, "..", "files")), ".")
-        
+        print("\t * Done! Launch app.py and navigate to http://localhost:5000/admin to get started!")
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="konikal", usage="konikal create [path]")
     create_parser = parser.add_subparsers().add_parser("create")
     create_parser.add_argument("path", nargs="?", default=".", metavar="path", type=str)
     args = parser.parse_args()
-    rinse(vars(args)["path"])
+    create(vars(args)["path"])

@@ -18,3 +18,15 @@ footer {
   height: 10%;
   background-color: #dfdfdf;
 }
+#header {
+  color: white;
+  font-family: "Lucida Console", Monaco, monospace;
+}
+#subheader {
+  color: white;
+}
+button {
+  background-color: white;
+  border: 1px solid black;
+  padding: 4px;
+}

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ title }}</title>
+    <title>{{ custom['title'] }}</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -14,10 +14,10 @@
             <div class="col-7">
                 <table width="100%">
                     <td>
-                        <a href="/" height="80%">{{ logo }}</a>
+                        <a href="/" height="80%"><h1 id="header">{{ custom['header'] }}</h1></a>
                     </td>
                     <td class="right">
-                        <h1>{{ slogan }}</h1>
+                        <h2 id="subheader">{{ custom['subheader'] }}</h2>
                     </td>
                 </table>
             </div>
@@ -31,8 +31,10 @@
                 <a href="/signup"><button>Signup</button></a>
                 {% endif %}
                 <form action="/search">
-                    <input type="text" name="search" placeholder="Search..." class="white form">
-                    <button class="white"><i class="fa fa-search white"></i></button>
+                    <p>
+                        <input type="text" name="search" placeholder="Search..." class="white form" width="60%">
+                        <button class="white" width="20%"><i class="fa fa-search white"></i></button>
+                    </p>
                 </form>
             </div>
             <div class="col-1"></div>
@@ -53,7 +55,7 @@
         </div>
     </article>
     <footer>
-        <p>Made by <a href="{{ website }}">{{ creator }}</a></p>
+        <p>Made by <a href="{{ custom['website'] }}">{{ custom['creator'] }}</a></p>
     </footer>
 </body>
 </html>

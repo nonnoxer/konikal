@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 import config
-config.setup()
+config.env()
 
 app = Flask(__name__)
 
@@ -25,18 +25,29 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def root():
-    return render_template("page.html", body="Main page")
+    return render_template("page.html", body="Main page", custom = config.custom)
 
 
 @app.route("/login")
 def login():
-    return render_template("page.html", body="Login page")
+    return render_template("page.html", body=Markup(config.body["login"]), custom=config.custom)
 
 
 @app.route("/signup")
 def signup():
-    return render_template("page.html", body="Signup page")
+    return render_template("page.html", body=Markup(config.body["signup"]), custom=config.custom)
 
+@app.route("/logined", methods=["POST"])
+def logined():
+    username = request.form["username"]
+    password = request.form["password"]
+    return redirect("/")
+
+@app.route("/signuped", methods=["POST"])
+def signuped():
+    username = request.form["username"]
+    password = request.form["password"]
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)

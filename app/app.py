@@ -22,9 +22,17 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
+db.execute("""CREATE TABLE IF NOT EXISTS users(
+    id SERIAL,
+    username VARCHAR PRIMARY KEY,
+    password VARCHAR NOT NULL,
+    email VARCHAR,
+    admin BOOLEAN
+    );""")
 
 @app.route("/")
 def root():
+    session["route"] = "/"
     return render_template("page.html", body="Main page", custom = config.custom)
 
 
@@ -41,13 +49,42 @@ def signup():
 def logined():
     username = request.form["username"]
     password = request.form["password"]
-    return redirect("/")
+    users = db.execute(
+        "SELECT * FROM users WHERE username=:username AND password=:password;",
+        {"username": username, "password": password}
+        ).fetchall()
+    if users == []:
+        session["error"] = "alert('Invalid login');"
+        return redirect(session["route"])
+    else:
+        if users[0][3]:
+            session["admin"] = username
+        session["user"] = username
+        return redirect(session["route"])
 
 @app.route("/signuped", methods=["POST"])
 def signuped():
     username = request.form["username"]
     password = request.form["password"]
-    return redirect("/")
+    users = db.execute(
+        "SELECT * FROM users WHERE username=:username",
+        {"username": username}
+    ).fetchall()
+    if users == []:
+        db.execute(
+            "INSERT INTO users (username, password) VALUES (:username, :password);",
+            {"username": username, "password": password}
+            )
+        session["user"] = username
+        return redirect(session["route"])
+    else:
+        session["error"] = "alert('Invalid signup');"
+        return redirect(session["route"])
+
+@app.route("/logouted")
+def logouted():
+    session.pop("user")
+    return redirect(session["route"])
 
 if __name__ == "__main__":
     app.run(debug=True)

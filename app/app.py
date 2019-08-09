@@ -45,6 +45,18 @@ def login():
 def signup():
     return render_template("page.html", body=Markup(config.body["signup"]), custom=config.custom)
 
+@app.route("/user/<username>")
+def user(username):
+    if "user" in session:
+        if session["user"] == username:
+            return render_template("page.html", body=Markup(config.body["user"]), custom=config.custom)
+        else:
+            session["error"] = "alert('Invalid route');"
+            return redirect(session["route"])
+    else:
+        session["error"] = "alert('Invalid route');"
+        return redirect(session["route"])
+
 @app.route("/logined", methods=["POST"])
 def logined():
     username = request.form["username"]
@@ -67,7 +79,7 @@ def signuped():
     username = request.form["username"]
     password = request.form["password"]
     users = db.execute(
-        "SELECT * FROM users WHERE username=:username",
+        "SELECT * FROM users WHERE username=:username;",
         {"username": username}
     ).fetchall()
     if users == []:
@@ -75,6 +87,7 @@ def signuped():
             "INSERT INTO users (username, password) VALUES (:username, :password);",
             {"username": username, "password": password}
             )
+        db.commit()
         session["user"] = username
         return redirect(session["route"])
     else:
@@ -85,6 +98,11 @@ def signuped():
 def logouted():
     session.pop("user")
     return redirect(session["route"])
+
+@app.route("/test")
+def test():
+    result = db.execute("SELECT * FROM users;").fetchall()
+    return str(result)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -6,7 +6,7 @@ def create(path):
     print(" * Creating files at specified path...")
     if os.path.exists(path):
         os.chdir(path)
-        copy_tree(os.path.abspath(os.path.join(__file__, "..", "files")), ".")
+        copy_tree(os.path.abspath(os.path.join(__file__, "..", "app")), ".")
     else:
         path_list = os.path.split(path)
         for i in path_list:
@@ -18,7 +18,7 @@ def create(path):
                 print("Invalid path")
                 exit()
             os.chdir(i)
-        copy_tree(os.path.abspath(os.path.join(__file__, "..", "files")), ".")
+        copy_tree(os.path.abspath(os.path.join(__file__, "..", "app")), ".")
     print(" * Done! Launch app.py and navigate to http://localhost:5000/admin to get started!")
 
 

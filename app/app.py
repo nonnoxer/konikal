@@ -33,23 +33,30 @@ db.execute("""CREATE TABLE IF NOT EXISTS users(
 @app.route("/")
 def root():
     session["route"] = "/"
-    return render_template("page.html", body="Main page", custom = config.custom)
+    return render_template("page.html", body="Main page", custom=config.custom)
 
 
 @app.route("/login")
 def login():
-    return render_template("page.html", body=Markup(config.body["login"]), custom=config.custom)
-
+    if "user" not in session:
+        return render_template("page.html", body=Markup(config.page["login"]), custom=config.custom)
+    else:
+        session["error"] = "alert('Already logged in');"
+        return redirect(session["route"])
 
 @app.route("/signup")
 def signup():
-    return render_template("page.html", body=Markup(config.body["signup"]), custom=config.custom)
+    if "user" not in session:
+        return render_template("page.html", body=Markup(config.page["signup"]), custom=config.custom)
+    else:
+        session["error"] = "alert('Already logged in');"
+        return redirect(session["route"])
 
 @app.route("/user/<username>")
 def user(username):
     if "user" in session:
         if session["user"] == username:
-            return render_template("page.html", body=Markup(config.body["user"]), custom=config.custom)
+            return render_template("page.html", body=Markup(config.page["user"].format(user=session["user"])), custom=config.custom)
         else:
             session["error"] = "alert('Invalid route');"
             return redirect(session["route"])
@@ -96,13 +103,20 @@ def signuped():
 
 @app.route("/logouted")
 def logouted():
-    session.pop("user")
+    if "user" in session:
+        session.pop("user")
+    if "admin" in session:
+        session.pop("admin")
     return redirect(session["route"])
 
 @app.route("/test")
 def test():
     result = db.execute("SELECT * FROM users;").fetchall()
     return str(result)
+
+@app.route("/admin")
+def admin():
+    return render_template("admin.html", page="Login")
 
 if __name__ == "__main__":
     app.run(debug=True)

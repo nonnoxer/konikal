@@ -1,73 +1,69 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>{{ custom['title'] }}</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicon_package/apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon_package/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon_package/favicon-16x16.png') }}">
-    <link rel="manifest" href="{{ url_for('static', filename='favicon_package/site.webmanifest') }}">
-    <link rel="mask-icon" href="{{ url_for('static', filename='favicon_package/safari-pinned-tab.svg') }}" color="#ff7f00">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
-</head>
-{% if "error" in session %}
-<body onload="{{ session.pop('error') }}">
-{% else %}
-<body>
-{% endif %}
-    <header>
-        <div class="row">
-            <div class="col-1"></div>
-            <div class="col-7">
-                <table width="100%">
-                    <td>
-                        <a href="/" height="80%"><h1 id="header">{{ custom['header'] }}</h1></a>
-                    </td>
-                    <td class="right">
-                        <h2 id="subheader">{{ custom['subheader'] }}</h2>
-                    </td>
-                </table>
-            </div>
-            <div class="col-1"></div>
-            <div class="col-2 right">
-                {% if "user" in session %}
-                <p class="white">Welcome, <a href="/user/{{ user }}" class="white"><u>{{ session["user"] }}</u></a>!
+    <head>
+        <title>{{ custom['title'] }}</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="icon" type="image/png"href="{{ url_for('static', filename='favicon.png') }}">
+    </head>
+    {% if "error" in session %}
+    <body onload="{{ session.pop('error') }}">
+    {% else %}
+    <body>
+    {% endif %}
+        <header>
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-7">
+                    <table width="100%">
+                        <td>
+                            <a href="/" height="80%"><h1 id="header">{{ custom['header'] }}</h1></a>
+                        </td>
+                        <td class="right">
+                            <h2 id="subheader">{{ custom['subheader'] }}</h2>
+                        </td>
+                    </table>
+                </div>
+                <div class="col-1"></div>
+                <div class="col-2 right">
+                    {% if "user" in session %}
+                    <p class="white">Welcome, <a href="/user/{{ session['user'] }}" class="white"><u>{{ session["user"] }}</u></a>!
                     <a href="/logouted"><button>Logout</button></a></p>
-                {% else %}
-                <a href="/login"><button>Login</button></a>
-                <a href="/signup"><button>Signup</button></a>
-                {% endif %}
-                <form action="/search">
-                    <p>
-                        <input type="text" name="search" placeholder="Search..." class="white form" width="60%">
-                        <button class="white" width="20%"><i class="fa fa-search white"></i></button>
-                    </p>
-                </form>
+                    {% else %}
+                    <a href="/login"><button>Login</button></a>
+                    <a href="/signup"><button>Signup</button></a>
+                    {% endif %}
+                    <form action="/search">
+                        <p>
+                            <input type="text" name="search" placeholder="Search..." class="white form" width="60%">
+                            <button class="white" width="20%"><i class="fa fa-search white"></i></button>
+                        </p>
+                    </form>
+                </div>
+                <div class="col-1"></div>
             </div>
-            <div class="col-1"></div>
-        </div>
-    </header>
-    <article>
-        <br>
-        <div class="row">
-            <div class="col-1"></div>
-            <div class="col-7 body">
-                {{ body }}
+        </header>
+        <article>
+            <br>
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-7 body">
+                    {{ body }}
+                </div>
+                <div class="col-1"></div>
+                <div class="col-2 body">
+                    {{ sidebar }}
+                </div>
+                <div class="col-1"></div>
             </div>
-            <div class="col-1"></div>
-            <div class="col-2 body">
-                {{ sidebar }}
-            </div>
-            <div class="col-1"></div>
-        </div>
-    </article>
-    <footer>
-        <p>Made by <a href="{{ custom['website'] }}">{{ custom['creator'] }}</a></p>
-    </footer>
-</body>
+        </article>
+        <footer>
+            <p>Made by <a href="{{ custom['website'] }}" target="_blank">{{ custom['creator'] }}</a></p>
+            {% if "admin" in session %}
+            <a href="/admin" target="_blank">admin</a>
+            {% endif %}
+        </footer>
+    </body>
 </html>

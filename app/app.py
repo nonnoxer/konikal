@@ -116,7 +116,10 @@ def test():
 
 @app.route("/admin")
 def admin():
-    return render_template("admin.html", page="Login")
+    if "admin" in session:
+        return render_template("admin.html", page="Dashboard")
+    else:
+        return render_template("admin.html", page="Login", display=Markup(config.admin["login"]))
 
 if __name__ == "__main__":
     app.run(debug=True)

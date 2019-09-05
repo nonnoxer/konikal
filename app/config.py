@@ -47,8 +47,11 @@ page["user"] = """
     </form>
     """
 admin["login"] = """
-    <form action="/adminined" methods="POST">
-        <input
+    <form action="/adminined" method="POST">
+        <input type="text" name="username" placeholder="Username"><br>
+        <input type="password" name="password" placeholder="Password"><br>
+        <input type="submit" value="Login">
+    </form>
     """
 admin["dashboard"] = """
     """

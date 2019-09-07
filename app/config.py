@@ -18,6 +18,7 @@ dashboard = {
 page = {}
 admin = {}
 page["login"] = """
+    <h1>Login</h1>
     <form action="/logined" method="POST">
         <input type="name" name="username" placeholder="Username"><br>
         <input type="password" name="password" placeholder="Password"><br>
@@ -25,6 +26,7 @@ page["login"] = """
     </form>
     """
 page["signup"] = """
+    <h1>Signup</h1>
     <form action="/signuped" method="POST">
         <input type="name" name="username" placeholder="Username"><br>
         <input type="password" name="password" placeholder="Password"><br>
@@ -47,11 +49,14 @@ page["user"] = """
     </form>
     """
 admin["login"] = """
-    <form action="/adminined" method="POST">
+    <h1>Admin Login</h1>
+    <form action="/adminlogined" method="POST">
         <input type="text" name="username" placeholder="Username"><br>
         <input type="password" name="password" placeholder="Password"><br>
         <input type="submit" value="Login">
     </form>
+    <br>
+    <a href="/route">Back</a>
     """
 admin["dashboard"] = """
     """

@@ -18,12 +18,9 @@ footer {
   min-height: 10%;
   background-color: #dfdfdf;
 }
-#header {
-  color: white;
+header {
+  min-height: 20%;
   font-family: "Lucida Console", Monaco, monospace;
-}
-#subheader {
-  color: white;
 }
 button {
   background-color: white;
@@ -32,4 +29,7 @@ button {
 }
 .white {
   color: white;
+}
+.navbar-light {
+  background-color: #ff7f00;
 }

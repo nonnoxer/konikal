@@ -7,44 +7,45 @@
             integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="icon" type="image/png"href="{{ url_for('static', filename='favicon.png') }}">
+        <script src="https://kit.fontawesome.com/6f215c743d.js"></script>
     </head>
     {% if "error" in session %}
     <body onload="{{ session.pop('error') }}">
     {% else %}
     <body>
     {% endif %}
-        <header>
-            <div class="row">
-                <div class="col-1"></div>
-                <div class="col-7">
-                    <table width="100%">
-                        <td>
-                            <a href="/" height="80%"><h1 id="header">{{ custom['header'] }}</h1></a>
-                        </td>
-                        <td class="right">
-                            <h2 id="subheader">{{ custom['subheader'] }}</h2>
-                        </td>
-                    </table>
-                </div>
-                <div class="col-1"></div>
-                <div class="col-2 right">
-                    {% if "user" in session %}
-                    <p class="white">Welcome, <a href="/user/{{ session['user'] }}" class="white"><u>{{ session["user"] }}</u></a>!
-                    <a href="/logouted"><button>Logout</button></a></p>
-                    {% else %}
-                    <a href="/login"><button>Login</button></a>
-                    <a href="/signup"><button>Signup</button></a>
-                    {% endif %}
-                    <form action="/search">
-                        <p>
-                            <input type="text" name="search" placeholder="Search..." class="white form" width="60%">
-                            <button class="white" width="20%"><i class="fa fa-search white"></i></button>
-                        </p>
-                    </form>
-                </div>
-                <div class="col-1"></div>
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <a class="navbar-brand" href="/">Konikal</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                </ul>
             </div>
-        </header>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <form action="/search">
+                    <input type="text" name="search" placeholder="Search..." class="white form" width="60%">
+                    <button width="20%"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+            <span>
+                {% if "user" in session %}
+                <p class="white">Welcome, <a href="/user/{{ session['user'] }}" class="white"><u>{{ session["user"] }}</u></a>!
+                    <a href="/logouted"><button>Logout</button></a></p>
+                {% else %}
+                <a href="/login"><button>Login</button></a>
+                <a href="/signup"><button>Signup</button></a>
+                {% endif %}
+            </span>
+        </nav>
         <article>
             <br>
             <div class="row">

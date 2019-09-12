@@ -26,18 +26,25 @@ Base = declarative_base()
 
 class User(Base):
     __tablename__ = "users"
-    username = Column(String(64), nullable=False, primary_key=True)
-    password = Column(String(64), nullable=False)
+    id = Column(Integer, Sequence("users_sequence"), primary_key=True)
+    username = Column(String, nullable=False, unique=True)
+    password = Column(String, nullable=False)
     elevation = Column(Integer, nullable=False, default=0)
 
 class Post(Base):
     __tablename__ = "posts"
-    id = Column(Integer, Sequence("posts_sequence"), nullable=False, primary_key=True)
-    title = Column(String(256), nullable=False)
-    author = Column(ForeignKey(User.username), nullable=False)
+    id = Column(Integer, Sequence("posts_sequence"), primary_key=True)
+    title = Column(String, nullable=False)
+    author = Column(String, nullable=False)
     year = Column(Integer, nullable=False)
     month = Column(Integer, nullable=False)
     date = Column(Integer, nullable=False)
+    content = Column(String, nullable=False)
+
+class Page(Base):
+    __tablename__ = "pages"
+    id = Column(Integer, Sequence("pages_sequence"), primary_key=True)
+    title = Column(String, nullable=False, unique=True)
     content = Column(String, nullable=False)
 
 Base.metadata.create_all(engine)

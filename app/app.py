@@ -34,7 +34,8 @@ class User(Base):
 class Post(Base):
     __tablename__ = "posts"
     id = Column(Integer, Sequence("posts_sequence"), primary_key=True)
-    title = Column(String, nullable=False)
+    title = Column(String, nullable=False, unique=True)
+    slug = Column(String, nullable=False, unique=True)
     author = Column(String, nullable=False)
     year = Column(Integer, nullable=False)
     month = Column(Integer, nullable=False)
@@ -45,6 +46,7 @@ class Page(Base):
     __tablename__ = "pages"
     id = Column(Integer, Sequence("pages_sequence"), primary_key=True)
     title = Column(String, nullable=False, unique=True)
+    slug = Column(String, nullable=False, unique=True)
     content = Column(String, nullable=False)
 
 Base.metadata.create_all(engine)
@@ -79,6 +81,7 @@ def signup():
 def user(username):
     if "user" in session:
         if session["user"] == username:
+            session["route"] = "/user/" + username
             return render_template("page.html", body=Markup(config.page["user"].format(user=session["user"])), custom=config.custom)
         else:
             session["error"] = "alert('Invalid route');"
@@ -123,17 +126,33 @@ def logouted():
         session.pop("elevation")
     return redirect("/route")
 
-@app.route("/route")
-def route():
-    if "route" in session:
-        return redirect(session["route"])
+@app.route("/editpassworded", methods=["POST"])
+def editpassworded():
+    if "user" in session:
+        if session["user"] == username:
+            username = request.form["username"]
+            password = request.form["password"]
+            db.query(User).filter_by(username=username).first().password = password
+            db.commit()
+            return redirect("/route")
+        else:
+            session["error"] = "alert('Invalid user');"
     else:
-        return redirect("/")
+        session["error"] = "alert('Not logged in');"
 
-@app.route("/test")
-def test():
-    result = db.query(User).all()
-    return str(result)
+@app.route("/deleteusered", methods=["POST"])
+def deleteusered():
+    if "user" in session:
+        if session["user"] == username:
+            username = request.form["username"]
+            db.delete(db.query(User).filter_by(username=username).first())
+            db.commit()
+            session["route"] = "/"
+            return redirect("/logouted")
+        else:
+            session["error"] = "alert('Invalid user');"
+    else:
+        session["error"] = "alert('Not logged in');"
 
 @app.route("/admin")
 def admin():
@@ -148,6 +167,13 @@ def adminlogined():
     password = request.form["password"]
     session["elevation"] = username
     return redirect("/admin")
+
+@app.route("/route")
+def route():
+    if "route" in session:
+        return redirect(session["route"])
+    else:
+        return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True) 

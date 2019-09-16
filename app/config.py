@@ -37,14 +37,14 @@ page["signup"] = """
 page["user"] = """
     <h1>{user}</h1>
     <h2>Edit password</h2>
-    <form action="/editedpassword" method="POST">
+    <form action="/editpassworded" method="POST">
         <input type="text" name="username" value="{user}" readonly hidden>
         <input type="text" name="password" placeholder="New password">
         <br>
         <input type="submit" value="Edit">
     </form>
     <h2>Delete user</h2>
-    <form action="/deleteduser" method="POST">
+    <form action="/deleteusered" method="POST">
         <input type="text" name="username" value="{user}" readonly hidden>
         <input type="submit" value="Delete">
     </form>

@@ -33,3 +33,12 @@ button {
 .navbar-light {
   background-color: #ff7f00;
 }
+.center {
+  text-align: center;
+}
+.right {
+  text-align: right;
+}
+span .right {
+  float: right;
+}

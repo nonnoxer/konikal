@@ -6,7 +6,6 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 import config
-config.env()
 
 app = Flask(__name__)
 
@@ -130,11 +129,6 @@ def route():
     else:
         return redirect("/")
 
-@app.route("/test")
-def test():
-    result = db.query(User).all()
-    return str(result)
-
 @app.route("/admin")
 def admin():
     if "elevation" in session:
@@ -149,5 +143,24 @@ def adminlogined():
     session["elevation"] = username
     return redirect("/admin")
 
+@app.route("/admin/users")
+def users():
+    return render_template("admin.html", page="Users", display=Markup(config.admin["users"]))
+
+@app.route("/admin/posts")
+def posts():
+    return render_template("admin.html", page="posts", display=Markup(config.admin["posts"]))
+
+@app.route("/admin/pages")
+def pages():
+    return render_template("admin.html", page="pages", display=Markup(config.admin["pages"]))
+
+@app.route("/test")
+def test():
+    users = db.query(User).all()
+    posts = db.query(Post).all()
+    pages = db.query(Page).all()
+    return str(users) + "\n" + str(posts) + "\n" + str(pages)
+
 if __name__ == "__main__":
-    app.run(debug=True) 
+    app.run(debug=True)

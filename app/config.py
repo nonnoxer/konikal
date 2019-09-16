@@ -62,14 +62,31 @@ admin["login"] = """
 admin["dashboard"] = """
     """
 admin["users"] = """
+    <h1>Users</h1>
+    <table>
+        {users}
+    </table>
+    <a href="/admin">Back</a>
     """
 admin["posts"] = """
+    <h1>Posts</h1>
+    <table>
+        {posts}
+    </table>
+    <a href="/admin">Back</a>
     """
 admin["pages"] = """
+    <h1>Pages</h1>
+    <table>
+        {pages}
+    </table>
+    <a href="/admin">Back</a>
     """
 adminbar["4"] = """
     """
-DATABASE_URL = "postgres://biqwifvhumknfy:4662193c2ba441b1ca2f0797fbde1141f990b9a65b845702bc15138b948ab528@ec2-50-16-197-244.compute-1.amazonaws.com:5432/dsl3qjvslamil"
 
-def env():
-    os.environ["DATABASE_URL"] = DATABASE_URL
+DATABASE_URL = open("app/database_url.txt", "r").readlines()[0]
+DATABASE_URL = "sqlite:///app/database.db" #Definitely remove later
+#Remove later? when publicly pushing
+#DATABASE_URL = "postgres://biqwifvhumknfy:4662193c2ba441b1ca2f0797fbde1141f990b9a65b845702bc15138b948ab528@ec2-50-16-197-244.compute-1.amazonaws.com:5432/dsl3qjvslamil"
+os.environ["DATABASE_URL"] = DATABASE_URL

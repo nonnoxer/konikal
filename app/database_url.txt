@@ -1,1 +1,1 @@
-sqlite:///:memory:
+sqlite:///app/database.db

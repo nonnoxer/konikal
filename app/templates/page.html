@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ custom['title'] }}</title>
+        <title>{{ custom["header"] }}</title>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
             integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -14,8 +14,8 @@
     {% else %}
     <body>
     {% endif %}
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <a class="navbar-brand" href="/">Konikal</a>
+        <nav class="navbar navbar-expand navbar-dark" style="background-color: #ff7f00;">
+            <a class="navbar-brand" href="/">{{ custom["header"] }}</a>
             <div class="navbar-collapse">
                 <ul class="navbar-nav">
                     <li class="nav-item active">

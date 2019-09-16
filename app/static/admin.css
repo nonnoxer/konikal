@@ -6,10 +6,6 @@
 html, body {
   height: 100%;
 }
-header {
-  min-height: 20%;
-  background-color: #23282d;
-}
 article {
   min-height: 80%;
 }

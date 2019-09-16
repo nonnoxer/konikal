@@ -3,8 +3,7 @@ import os
 settings = {}
 
 custom = {
-    "title": "konikal",
-    "header": "konikal",
+    "header": "Konikal",
     "subheader": "a website generator",
     "creator": "Natanael Tan",
     "website": "https://github.com/nonnoxer"
@@ -63,14 +62,27 @@ admin["dashboard"] = """
     """
 admin["users"] = """
     <h1>Users</h1>
-    <table>
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Elevation</th>
+        </tr>
         {users}
     </table>
     <a href="/admin">Back</a>
     """
 admin["posts"] = """
     <h1>Posts</h1>
-    <table>
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Slug</th>
+            <th>Author</th>
+            <th>Date</th>
+        </tr>
         {posts}
     </table>
     <a href="/admin">Back</a>
@@ -86,7 +98,6 @@ adminbar["4"] = """
     """
 
 DATABASE_URL = open("app/database_url.txt", "r").readlines()[0]
-DATABASE_URL = "sqlite:///app/database.db" #Definitely remove later
 #Remove later? when publicly pushing
-#DATABASE_URL = "postgres://biqwifvhumknfy:4662193c2ba441b1ca2f0797fbde1141f990b9a65b845702bc15138b948ab528@ec2-50-16-197-244.compute-1.amazonaws.com:5432/dsl3qjvslamil"
+DATABASE_URL = "postgres://biqwifvhumknfy:4662193c2ba441b1ca2f0797fbde1141f990b9a65b845702bc15138b948ab528@ec2-50-16-197-244.compute-1.amazonaws.com:5432/dsl3qjvslamil"
 os.environ["DATABASE_URL"] = DATABASE_URL

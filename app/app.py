@@ -174,5 +174,49 @@ def route():
     else:
         return redirect("/")
 
+@app.route("/admin/users")
+def users():
+    users = db.query(User).all()
+    table = ""
+    if users != []:
+        for i in users:
+            table += """
+                <tr>
+                    <td>{id}
+                    <td>{username}</td>
+                    <td>{password}</td>
+                    <td>{elevation}</td>
+                </tr>
+            """.format(id=i.id, username=i.username, password=i.password, elevation=i.elevation)
+    else:
+        table = "No users"
+    return render_template("admin.html", page="Users", display=Markup(config.admin["users"].format(users=table)))
+
+@app.route("/admin/posts")
+def posts():
+    posts = db.query(Post).all()
+    table = ""
+    if posts != []:
+        for i in posts:
+            table += """
+                <tr>
+                    <td>A row</td>
+                </tr>
+            """
+    else:
+        table = "No posts"
+    return render_template("admin.html", page="Posts", display=Markup(config.admin["posts"].format(posts=table)))
+
+@app.route("/admin/pages")
+def pages():
+    return render_template("admin.html", page="Pages", display=Markup(config.admin["pages"]))
+
+@app.route("/test")
+def test():
+    users = db.query(User).all()
+    posts = db.query(Post).all()
+    pages = db.query(Page).all()
+    return str(users) + "\n" + str(posts) + "\n" + str(pages)
+
 if __name__ == "__main__":
     app.run(debug=True)

@@ -2,12 +2,16 @@
 <html>
     <head>
         <title>{{ custom["header"] }}</title>
+        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
             integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
             integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+        <link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     </head>
     {% if "error" in session %}
     <body onload="{{ session.pop('error') }}">
@@ -59,8 +63,9 @@
         <footer>
             <p>Made by <a href="{{ custom['website'] }}" target="_blank">{{ custom['creator'] }}</a></p>
             {% if "elevation" in session %}
-            <a href="/admin" target="_blank"><button>Admin</button></a>
+            <a href="/admin/route" target="_blank"><button>Admin</button></a>
             {% endif %}
         </footer>
+        <script src="{{ url_for('static', filename='script.js') }}" onload="updatedisplay()"></script>
     </body>
 </html>

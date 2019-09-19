@@ -9,11 +9,6 @@ custom = {
     "website": "https://github.com/nonnoxer"
 }
 
-dashboard = {
-    "login": "login",
-    "dashboard": "dashboard"
-}
-
 page = {}
 admin = {}
 adminbar = {}
@@ -55,6 +50,18 @@ page["user"] = """
         <input type="submit" value="Delete">
     </form>
     """
+page["post"] = """
+    <h1>{title}</h1>
+    <p>{date}</p>
+    <b>By {author}</b>
+    <textarea id="content" readonly hidden>{content}</textarea>
+    <div id="editor"></div>
+    """
+page["page"] = """
+    <h1>{title}</h1>
+    <textarea id="content" readonly hidden>{content}</textarea>
+    <div id="editor"></div>
+    """
 admin["login"] = """
     <h1>Admin Login</h1>
     <form action="/admin/login/done" method="POST">
@@ -81,63 +88,88 @@ admin["admin"] = """
         <li><a href="/admin/pages">All pages</a></li>
         <li><a href="/admin/pages/new">New page</a></li>
     </ul>
-    <p><a href="/logouted">Logout</a></p>
+    <p><a href="/logout/done">Logout</a></p>
     """
 admin["users"] = """
     <h1>Users</h1>
     <a href="/admin/users/new">New user</a></li>
     {display}
-    <a href="/admin">Back</a>
+    <p><a href="/admin">Back</a></p>
+    <p><a href="/logout/done">Logout</a></p>
+    """
+admin["users_new"] = """
+    <h1>New User</h1>
+    <form action="/admin/users/new/done" method="POST">
+        <input type="name" name="username" placeholder="Username"><br>
+        <input type="text" name="password" placeholder="Password"><br>
+        <input type="range" id="elevationrange" name="elevation" value="0" min="0" max="4"
+            onchange="updateelevationvalue()">
+        <p id="elevationvalue">0</p>
+        <input type="submit" value="Create">
+    </form>
+    <p><a href="/admin/users">Back</a></p>
+    <p><a href="/logout/done">Logout</a></p>
     """
 admin["user"] = """
     {display}
+    <p><a href="/admin/users">Back</a></p>
+    <p><a href="/logout/done">Logout</a></p>
     """
 admin["posts"] = """
     <h1>Posts</h1>
     <a href="/admin/posts/new">New post</a></li>
     {display}
-    <a href="/admin">Back</a>
+    <p><a href="/admin">Back</a></p>
+    <p><a href="/logout/done">Logout</a></p>
     """
 admin["posts_new"] = """
     <h1>New Post</h1>
-        <form action="/admin/posts/new/done" method="POST" id="editor">
-            <input type="text" name="title" placeholder="Title"><br>
-            <input type="text" name="slug" placeholder="Slug"><br>
-            <input type="name" name="author" placeholder="Author"><br>
-            <input type="date" name="date"><br>
-            <div id="editor-container" onkeyup="updatecontent()"></div>
-            <textarea form="editor" id="content" name="content" readonly hidden></textarea>
-            <input type="submit" value="Create">
-        </form>
+    <form action="/admin/posts/new/done" method="POST" id="editor">
+        <input type="text" name="title" placeholder="Title"><br>
+        <input type="text" name="slug" placeholder="Slug"><br>
+        <input type="name" name="author" placeholder="Author"><br>
+        <input type="date" name="date"><br>
+        <div id="editor-container" onkeyup="updatecontent()"></div>
+        <textarea form="editor" id="content" name="content" readonly hidden></textarea>
+        <input type="submit" value="Create">
+    </form>
+    <p><a href="/admin/posts">Back</a></p>
+    <p><a href="/logout/done">Logout</a></p>
     """
 admin["post"] = """
     <h1>Edit Post</h1>
     {display}
+    <p><a href="/admin/posts">Back</a></p>
+    <p><a href="/logout/done">Logout</a></p>
 """
 admin["pages"] = """
     <h1>Pages</h1>
     <a href="/admin/pages/new">New page</a></li>
     {display}
-    <a href="/admin">Back</a>
+    <p><a href="/admin">Back</a></p>
+    <p><a href="/logout/done">Logout</a></p>
     """
 admin["pages_new"] = """
     <h1>New Page</h1>
-        <form action="/admin/pages/new/done" method="POST" id="editor">
-            <input type="text" name="title" placeholder="Title"><br>
-            <input type="text" name="slug" placeholder="Slug"><br>
-            <div id="editor-container" onkeyup="updatecontent()"></div>
-            <textarea form="editor" id="content" name="content" readonly hidden></textarea>
-            <input type="submit" value="Create">
-        </form>
+    <form action="/admin/pages/new/done" method="POST" id="editor">
+        <input type="text" name="title" placeholder="Title"><br>
+        <input type="text" name="slug" placeholder="Slug"><br>
+        <div id="editor-container" onkeyup="updatecontent()"></div>
+        <textarea form="editor" id="content" name="content" readonly hidden></textarea>
+        <input type="submit" value="Create">
+    </form>
+    <p><a href="/admin/pages">Back</a></p>
+    <p><a href="/logout/done">Logout</a></p>
     """
 admin["page"] = """
     <h1>Edit Page</h1>
     {display}
+    <p><a href="/admin/pages">Back</a></p>
+    <p><a href="/logout/done">Logout</a></p>
     """
 adminbar["4"] = """
     """
 
 DATABASE_URL = open("app/database_url.txt", "r").readlines()[0]
-#Remove later? when publicly pushing
-#DATABASE_URL = "postgres://biqwifvhumknfy:4662193c2ba441b1ca2f0797fbde1141f990b9a65b845702bc15138b948ab528@ec2-50-16-197-244.compute-1.amazonaws.com:5432/dsl3qjvslamil"
+DATABASE_URL = "postgres://biqwifvhumknfy:4662193c2ba441b1ca2f0797fbde1141f990b9a65b845702bc15138b948ab528@ec2-50-16-197-244.compute-1.amazonaws.com:5432/dsl3qjvslamil"
 os.environ["DATABASE_URL"] = DATABASE_URL

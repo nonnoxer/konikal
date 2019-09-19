@@ -349,23 +349,27 @@ def admin_users_new_done():
 def admin_users_username(username):
     if "elevation" in session:
         user = db.query(User).filter_by(username=username).first()
-        display = """
-            <h1>Edit user</h1>
-            <form action="/admin/users/{username}/edit/done" method="POST">
-                <input type="name" name="username" value="{username}" readonly hidden>
-                <input type="text" name="new_username" value="{username}" placeholder="Username"><br>
-                <input type="password" name="password" value="{password}" placeholder="Password"><br>
-                <input type="range" id="elevationrange" name="elevation" value="{elevation}" min="0" max="4" onchange="updateelevationvalue()">
-                <p id="elevationvalue">{elevation}</p>
-                <input type="submit" value="Update">
-            </form>
-            <form action="/admin/users/{username}/delete/done" method="POST">
-                <input type="name" name="username" value="{username}" readonly hidden>
-                <input type="submit" value="Delete user" class="red">
-            </form>
-            """.format(username=username, password=user.password, elevation=user.elevation)
-        session["admin_route"] = "/admin/users/{username}".format(username=username)
-        return render_template("admin.html", page=username, display=Markup(config.admin["user"].format(display=display)))
+        if user is not None:
+            display = """
+                <h1>Edit user</h1>
+                <form action="/admin/users/{username}/edit/done" method="POST">
+                    <input type="name" name="username" value="{username}" readonly hidden>
+                    <input type="text" name="new_username" value="{username}" placeholder="Username"><br>
+                    <input type="password" name="password" value="{password}" placeholder="Password"><br>
+                    <input type="range" id="elevationrange" name="elevation" value="{elevation}" min="0" max="4" onchange="updateelevationvalue()">
+                    <p id="elevationvalue">{elevation}</p>
+                    <input type="submit" value="Update">
+                </form>
+                <form action="/admin/users/{username}/delete/done" method="POST">
+                    <input type="name" name="username" value="{username}" readonly hidden>
+                    <input type="submit" value="Delete user" class="red">
+                </form>
+                """.format(username=username, password=user.password, elevation=user.elevation)
+            session["admin_route"] = "/admin/users/{username}".format(username=username)
+            return render_template("admin.html", page=username, display=Markup(config.admin["user"].format(display=display)))
+        else:
+            session["error"] = "alert('Invalid request: User does not exist');"
+            return redirect("/admin/users")
     else:
         session["error"] = "alert('Invalid elevation');"
         return redirect("/route")
@@ -488,27 +492,31 @@ def admin_posts_new_done():
 def admin_posts_slug(slug):
     if "elevation" in session:
         post = db.query(Post).filter_by(slug=slug).first()
-        display = """
-            <form action="/admin/posts/{slug}/edit/done" method="POST" id="editor">
-                <input type="text" name="title" placeholder="Author" value="{title}
-                    "><br>
-                <input type="text" name="slug" placeholder="Author" value="{slug}">
-                <br>
-                <input type="name" name="author" placeholder="Author"
-                    value="{author}"><br>
-                <input type="date" name="date" value="{date}"><br>
-                <div id="editor-container" onkeyup="updatecontent()"></div>
-                <textarea form="editor" id="content" name="content" readonly
-                    hidden>{content}</textarea>
-                <input type="submit" value="Update">
-            </form>
-            <form action="/admin/posts/deletepost/done" method="POST">
-                <input type="text" name="slug" value="{slug}" readonly hidden><br>
-                <input type="submit" value="Delete post" class="red">
-            </form>
-            """.format(title=post.title, slug=post.slug, author=post.author, date="{y}-{m}-{d}".format(y=post.year, m=post.month, d=post.date), content=post.content)
-        session["admin_route"] = "/admin/posts/{slug}".format(slug=slug)
-        return render_template("admin.html", page=post.title, display=Markup(config.admin["post"].format(display=display)))
+        if post is not None:
+            display = """
+                <form action="/admin/posts/{slug}/edit/done" method="POST" id="editor">
+                    <input type="text" name="title" placeholder="Author" value="{title}
+                        "><br>
+                    <input type="text" name="slug" placeholder="Author" value="{slug}">
+                    <br>
+                    <input type="name" name="author" placeholder="Author"
+                        value="{author}"><br>
+                    <input type="date" name="date" value="{date}"><br>
+                    <div id="editor-container" onkeyup="updatecontent()"></div>
+                    <textarea form="editor" id="content" name="content" readonly
+                        hidden>{content}</textarea>
+                    <input type="submit" value="Update">
+                </form>
+                <form action="/admin/posts/deletepost/done" method="POST">
+                    <input type="text" name="slug" value="{slug}" readonly hidden><br>
+                    <input type="submit" value="Delete post" class="red">
+                </form>
+                """.format(title=post.title, slug=post.slug, author=post.author, date="{y}-{m}-{d}".format(y=post.year, m=post.month, d=post.date), content=post.content)
+            session["admin_route"] = "/admin/posts/{slug}".format(slug=slug)
+            return render_template("admin.html", page=post.title, display=Markup(config.admin["post"].format(display=display)))
+        else:
+            session["error"] = "alert('Invalid request: Post does not exist');"
+            return redirect("/admin/posts")
     else:
         session["error"] = "alert('Invalid request: Elevation required');"
         return redirect("/route")
@@ -532,27 +540,35 @@ def admin_posts_slug_edit_done(slug):
         date = date[2]
         content = request.form["content"]
         post = db.query(Post).filter_by(slug=slug).first()
-        post.title = title
-        post.slug = new_slug
-        post.author = author
-        post.year = year
-        post.month = month
-        post.date = date
-        post.content = content
-        db.commit()
-        return redirect("/admin/posts")
+        if post is not None:
+            post.title = title
+            post.slug = new_slug
+            post.author = author
+            post.year = year
+            post.month = month
+            post.date = date
+            post.content = content
+            db.commit()
+            return redirect("/admin/posts")
+        else:
+            session["error"] = "alert('Invalid request: Post does not exist');"
+            return redirect("/admin/posts")
     else:
         session["error"] = "alert('Invalid request: Elevation required');"
         return redirect("/route")
 
 # Delete post processing
-@app.route("/admin/posts/deletepost/done", methods=["POST"])
-def admin_posts_deletepost_done():
+@app.route("/admin/posts/<slug>/delete/done", methods=["POST"])
+def admin_posts_slug_delete_done(slug):
     if "elevation" in session:
-        slug = request.form["slug"]
-        db.delete(db.query(Post).filter_by(slug=slug).first())
-        db.commit()
-        return redirect("/admin")
+        post = db.query(Post).filter_by(slug=slug).first()
+        if post is not None:
+            db.delete(post)
+            db.commit()
+            return redirect("/admin/posts")
+        else:
+            session["error"] = "alert('Invalid request: Post does not exist');"
+            return redirect("/admin/posts")
     else:
         session["error"] = "alert('Invalid request: Elevation required');"
         return redirect("/route")
@@ -618,25 +634,29 @@ def admin_pages_new_done():
 @app.route("/admin/pages/<slug>")
 def admin_pages_slug(slug):
     if "elevation" in session:
-        post = db.query(Page).filter_by(slug=slug).first()
-        display = """
-            <form action="/admin/pages/{slug}/edit/done" method="POST" id="editor">
-                <input type="text" name="title" placeholder="Author" value="{title}
-                    "><br>
-                <input type="text" name="slug" placeholder="Author" value="{slug}">
-                <br>
-                <div id="editor-container" onkeyup="updatecontent()"></div>
-                <textarea form="editor" id="content" name="content" readonly
-                    hidden>{content}</textarea>
-                <input type="submit" value="Update">
-            </form>
-            <form action="/admin/pages/deletepage/done" method="POST">
-                <input type="text" name="slug" value="{slug}" readonly hidden><br>
-                <input type="submit" value="Delete page" class="red">
-            </form>
-            """.format(title=post.title, slug=post.slug, content=post.content)
-        session["admin_route"] = "/admin/pages/{slug}".format(slug=slug)
-        return render_template("admin.html", page=post.title, display=Markup(config.admin["page"].format(display=display)))
+        page = db.query(Page).filter_by(slug=slug).first()
+        if page is not None:
+            display = """
+                <form action="/admin/pages/{slug}/edit/done" method="POST" id="editor">
+                    <input type="text" name="title" placeholder="Author" value="{title}
+                        "><br>
+                    <input type="text" name="slug" placeholder="Author" value="{slug}">
+                    <br>
+                    <div id="editor-container" onkeyup="updatecontent()"></div>
+                    <textarea form="editor" id="content" name="content" readonly
+                        hidden>{content}</textarea>
+                    <input type="submit" value="Update">
+                </form>
+                <form action="/admin/pages/deletepage/done" method="POST">
+                    <input type="text" name="slug" value="{slug}" readonly hidden><br>
+                    <input type="submit" value="Delete page" class="red">
+                </form>
+                """.format(title=page.title, slug=page.slug, content=page.content)
+            session["admin_route"] = "/admin/pages/{slug}".format(slug=slug)
+            return render_template("admin.html", page=post.title, display=Markup(config.admin["page"].format(display=display)))
+        else:
+            session["error"] = "alert('Invalid request: Page does not exist');"
+            return redirect("/admin/pages")
     else:
         session["error"] = "alert('Invalid request: Elevation required');"
         return redirect("/route")
@@ -649,23 +669,31 @@ def admin_pages_slug_edit_done(slug):
         new_slug = request.form["slug"]
         content = request.form["content"]
         page = db.query(Page).filter_by(slug=slug).first()
-        page.title = title
-        page.slug = new_slug
-        page.content = content
-        db.commit()
-        return redirect("/admin/pages")
+        if page is not None:
+            page.title = title
+            page.slug = new_slug
+            page.content = content
+            db.commit()
+            return redirect("/admin/pages")
+        else:
+            session["error"] = "alert('Invalid request: Page does not exist');"
+            return redirect("/admin/pages")
     else:
         session["error"] = "alert('Invalid request: Elevation required');"
         return redirect("/route")
 
 # Delete page processing
-@app.route("/admin/pages/deletepage/done", methods=["POST"])
+@app.route("/admin/pages/<slug>/delete/done", methods=["POST"])
 def admin_pages_deletepage_done():
     if "elevation" in session:
-        slug = request.form["slug"]
-        db.delete(db.query(Page).filter_by(slug=slug).first())
-        db.commit()
-        return redirect("/admin/pages")
+        page = db.query(Page).filter_by(slug=slug).first()
+        if page is not None:
+            db.delete(page)
+            db.commit()
+            return redirect("/admin/pages")
+        else:
+            session["error"] = "alert('Invalid request: Page does not exist');"
+            return redirect("/admin/pages")
     else:
         session["error"] = "alert('Invalid request: Elevation required');"
         return redirect("/route")

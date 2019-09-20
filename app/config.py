@@ -195,5 +195,5 @@ admin["page"] = """
 adminbar["4"] = """
     """
 
-DATABASE_URL = open("app/database_url.txt", "r").readlines()[0]
+DATABASE_URL = open("database_url.txt", "r").readlines()[0]
 os.environ["DATABASE_URL"] = DATABASE_URL

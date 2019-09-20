@@ -11,6 +11,7 @@ custom = {
 
 page = {}
 admin = {}
+pagebar = {}
 adminbar = {}
 page["login"] = """
     <h1>Login</h1>
@@ -50,6 +51,17 @@ page["user"] = """
         <input type="submit" value="Delete">
     </form>
     """
+page["posts"] = """
+    <h1>{page}</h1>
+    <table class="table">
+        <tr>
+            <th>Post</th>
+            <th>Author</th>
+            <th>Date</th>
+        </tr>
+        {body}
+    </table>
+    """
 page["post"] = """
     <h1>{title}</h1>
     <p>{date}</p>
@@ -61,6 +73,18 @@ page["page"] = """
     <h1>{title}</h1>
     <textarea id="content" readonly hidden>{content}</textarea>
     <div id="editor"></div>
+    """
+pagebar["home"] = """
+    {pagebar}
+    <li class="nav-item active">
+        <a class="nav-link" href="/posts">All Posts</a>
+    </li>
+    """
+pagebar["no_home"] = """
+    <li class="nav-item active">
+        <a class="nav-link" href="/">Home</a>
+    </li>
+    {pagebar}
     """
 admin["login"] = """
     <h1>Admin Login</h1>
@@ -154,6 +178,7 @@ admin["pages_new"] = """
     <form action="/admin/pages/new/done" method="POST" id="editor">
         <input type="text" name="title" placeholder="Title"><br>
         <input type="text" name="slug" placeholder="Slug"><br>
+        <input type="number" name="precedence" placeholder="Precedence" value="0"><br>
         <div id="editor-container" onkeyup="updatecontent()"></div>
         <textarea form="editor" id="content" name="content" readonly hidden></textarea>
         <input type="submit" value="Create">
@@ -171,5 +196,4 @@ adminbar["4"] = """
     """
 
 DATABASE_URL = open("app/database_url.txt", "r").readlines()[0]
-DATABASE_URL = "postgres://biqwifvhumknfy:4662193c2ba441b1ca2f0797fbde1141f990b9a65b845702bc15138b948ab528@ec2-50-16-197-244.compute-1.amazonaws.com:5432/dsl3qjvslamil"
 os.environ["DATABASE_URL"] = DATABASE_URL

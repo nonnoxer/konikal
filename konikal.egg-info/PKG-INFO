@@ -1,7 +1,7 @@
 Metadata-Version: 1.0
 Name: konikal
-Version: 0.0.1
-Summary: A website generator using Flask
+Version: 0.1.0
+Summary: A content management system using Flask
 Home-page: https://github.com/nonnoxer/konikal
 Author: Natanael Tan
 Author-email: nonnoxer@gmail.com
@@ -9,8 +9,8 @@ License: MIT
 Description: # konikal
         Website creator: konikal (flask)
         
-        1. Pip install konikal
-        2. py -m konikal create app
+        1. pip install konikal
+        2. python -m konikal create app
         3. ???
         4. Profit!
         
@@ -18,5 +18,5 @@ Description: # konikal
         * https://github.com/BillMills/pythonPackageLesson
         * https://realpython.com/command-line-interfaces-python-argparse/
         * https://stackoverflow.com/questions/17073688/how-to-use-argparse-subparsers-correctly
-        * https://realfavicongenerator.net/
+        
 Platform: UNKNOWN

@@ -3,10 +3,7 @@ import os
 settings = {}
 
 custom = {
-    "header": "Konikal",
-    "subheader": "a website generator",
-    "creator": "Natanael Tan",
-    "website": "https://github.com/nonnoxer"
+    "header": "Konikal"
 }
 
 page = {}

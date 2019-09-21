@@ -1151,7 +1151,7 @@ def admin_pages_slug(slug):
                 <form action="/admin/pages/{slug}/edit/done" method="POST" id="editor">
                     <input type="text" name="title" placeholder="Title" value="{title}"><br>
                     <input type="text" name="slug" placeholder="Slug" value="{slug}"><br>
-                    <input type="number" name="precedence" placeholder="Precedence" value={precedence}"><br>
+                    <input type="number" name="precedence" placeholder="Precedence" value={precedence}><br>
                     <div id="editor-container" onkeyup="updatecontent()"></div>
                     <textarea form="editor" id="content" name="content" readonly hidden>{content}</textarea>
                     <input type="submit" value="Update">

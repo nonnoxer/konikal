@@ -14,10 +14,6 @@ footer {
   min-height: 10%;
   background-color: #dfdfdf;
 }
-header {
-  min-height: 20%;
-  font-family: "Lucida Console", Monaco, monospace;
-}
 button {
   background-color: white;
   border: 1px solid black;

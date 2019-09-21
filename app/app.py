@@ -991,7 +991,7 @@ def admin_posts_slug(slug):
                         hidden>{content}</textarea>
                     <input type="submit" value="Update">
                 </form>
-                <form action="/admin/posts/deletepost/done" method="POST">
+                <form action="/admin/posts/{slug}/delete/done" method="POST">
                     <input type="text" name="slug" value="{slug}" readonly hidden><br>
                     <input type="submit" value="Delete post" class="red">
                 </form>

@@ -44,6 +44,10 @@
                 <div class="col-1"></div>
             </div>
         </article>
+        <footer>
+            <p>Made by <a href="{{ custom['website'] }}" target="_blank">{{ custom['creator'] }}</a></p>
+            <a href="/route" target="_blank"><button>Main</button></a>
+        </footer>
         <script src="{{ url_for('static', filename='admin.js') }}" onload="updateeditor()"></script>
     </body>
 </html>

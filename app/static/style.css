@@ -6,21 +6,13 @@
 html, body {
   height: 100%;
 }
-header {
-  min-height: 20%;
-  background-color: #23282d;
-}
 article {
   min-height: 80%;
 }
 footer {
   text-align: center;
   min-height: 10%;
-  background-color: #dfdfdf;
-}
-header {
-  min-height: 20%;
-  font-family: "Lucida Console", Monaco, monospace;
+  bakground-color: #dfdfdf;
 }
 button {
   background-color: white;

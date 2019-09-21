@@ -6,17 +6,25 @@ https://konikal.herokuapp.com/documentation
 
 ###### Method 1: Using the Konikal module to create an app
 Install Konikal from clone from Github (add ```--user``` as an optional tag)
-```pip install -e git+https://github.com/nonnoxer/konikal#egg=konikal-0.1.0```
+```
+pip install -e git+https://github.com/nonnoxer/konikal#egg=konikal-0.1.0
+```
 Create an app with Konikal (leave ```[path]``` blank for current directory, or use absolute or relative path)
-```python -m konikal create [path]```
+```
+python -m konikal create [path]
+```
 Done!
 
 ###### Method 2: Extract the app folder from the Konikal repository
 Clone https://github.com/nonnoxer/konikal or download it
-```git clone https://github.com/nonnoxer/konikal```
+```
+git clone https://github.com/nonnoxer/konikal
+```
 Find the app folder and copy its contents into your desired folder
 Install requirements (add ```--user``` as an optional tag)
-```pip install -r requirements.txt```
+```
+pip install -r requirements.txt
+```
 Done!
 
 # Setting up
@@ -52,6 +60,7 @@ class User(Base):
     password = Column(String, nullable=False)
     elevation = Column(Integer, nullable=False, default=0)
 ```
+* User urls are /user/<username>
 * Elevation ranges from 0 to 4, with 0 being a normal user and 4 being an admin user
 * Elevation from 1 to 4 allows access to the admin dashboard, although there is no current difference between elevations of 1 to 4
 * People can log in, sign up, log out, change username, change password and delete self from the frontend
@@ -83,8 +92,43 @@ class Post(Base):
 ```
 * Title is the displayed heading and title of the post
 * Slug is the url for the post. It is recommended that it is made out only of lowercase letters and hypens or underscores
+* Post urls are /posts/<year>/<month>/<date>/<slug>
 * If left blank, the year, month and date will be the current one
 * Posts are displayed latest first
 * Content is a stringified JSON from quill
 * Posts are edited from the admin dashboard using quill, a rich text editor
 * Posts are displayed using a readonly quill instance without a toolbar
+
+# Page management
+
+* The table pages has the following structure:
+  * id (Integer, Sequence, Primary Key)
+  * title (String, Not Null, Unique)
+  * slug (String, Not Null, Unique)
+  * precedence (Integer, Not Null)
+  * content (String, Not Null)
+* Code for page class:
+```python
+class Page(Base):
+    __tablename__ = "pages"
+  	id = Column(Integer, Sequence("pages_sequence"), primary_key=True)
+  	title = Column(String, nullable=False, unique=True)
+  	slug = Column(String, nullable=False, unique=True)
+  	elevation = Column(Integer, nullable=False)
+  	content = Column(String, nullable=False)
+'''
+* Title is the displayed heading and title of the page
+* Slug is the url for the page. It is recommended that it is made out only of lowercase letters and hypens or underscores
+* Page urls are /<slug>;
+* If the slug is 'home, it will redirect to the root route, '/'
+* If there are no pages with slug 'home', then the root route, '/', will display all posts. There will be no option for All Posts in the top menu.
+* Precedence determines which pages are displayed in front in the top menu
+* Content is a stringified JSON from quill
+* Pages are edited from the admin dashboard using quill, a rich text editor
+* Pages are displayed using a readonly quill instance without a toolbar
+
+# Other notes
+
+* After deploying to a production server, pages that display database information may have to be refreshed a few times in order to reflect updated information
+* Certain actions like logging in, signing up, logging out will redirect the user to their previously visited content page
+* Logging out or deleting self while at user page will redirect to root route

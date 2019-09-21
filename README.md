@@ -29,8 +29,8 @@ Done!
 
 # Setting up
 
-* Edit database_url.txt. By default, this will be an sqlite database stored in database.db, but if you have your own database (strongly recommended) store the database url in database_url.txt. For more information on database urls, see https://docs.sqlalchemy.org/en/13/core/engines.html#database-urls.
-* Run app.py as a development server or deploy your app to a production server. The app will start with:
+* Edit ```database_url.txt```. By default, this will be an sqlite database stored in ```database.db```, but if you have your own database (strongly recommended) store the database url in database_url.txt. For more information on database urls, see https://docs.sqlalchemy.org/en/13/core/engines.html#database-urls.
+* Run ```app.py``` as a development server or deploy your app to a production server. The app will start with:
   * 1 admin user, username 'admin' and password 'password' (strongly recommended to change this as soon as possible)
   * 1 starter post published on the current date, by 'Konikal'
   * 1 home page
@@ -38,15 +38,16 @@ Done!
 
 # Customisation
 
-* For editing style of frontend pages, go to /static/style.css. For editing style of admin pages, go to /static/admin.css
-* For editing javascript of frontend pages, go to /static/script.js. For editing javascript of admin pages, go to /static/admin.js
-* For editing main layout of frontend pages, go to /templates/page.html. For editing main layout of admin pages, go to /templates/admin.html
-* It is harder to customise the custom display of each request as it will require editing of app.py and config.py and may potentially break the code. Only do this with enough experience. If it fails, you can re-create the python files from Konikal's repository.
-* To customise the name of your app, go to config.py and edit the variable custom["header"].
+* For changing favicon of frontend pages, change ```/static/favicon.ico```. For changing favicon of admin pages, change ```/static/admin.ico```.
+* For editing style of frontend pages, go to ```/static/style.css```. For editing style of admin pages, go to ```/static/admin.css```.
+* For editing javascript of frontend pages, go to ```/static/script.js```. For editing javascript of admin pages, go to ```/static/admin.js```.
+* For editing main layout of frontend pages, go to ``|/templates/page.html```. For editing main layout of admin pages, go to ```/templates/admin.html```.
+* It is harder to customise the custom display of each request as it will require editing of ```app.py``` and ```config.py``` and may potentially break the code. Only do this with enough experience. If it fails, you can re-create the python files from Konikal's repository.
+* To customise the name of your app, go to ```config.py``` and edit the variable ```custom["header"]```.
 
 # User management
 
-* The table users has the following structure:
+* The table ```users``` has the following structure:
   * id (Integer, Sequence, Primary Key)
   * username (String, Not Null, Unique)
   * password (String, Not Null)
@@ -68,7 +69,7 @@ class User(Base):
 
 # Post management
 
-* The table posts has the following structure:
+* The table ```posts``` has the following structure:
   * id (Integer, Sequence, Primary Key)
   * title (String, Not Null, Unique)
   * slug (String, Not Null, Unique)
@@ -101,7 +102,7 @@ class Post(Base):
 
 # Page management
 
-* The table pages has the following structure:
+* The table ```pages``` has the following structure:
   * id (Integer, Sequence, Primary Key)
   * title (String, Not Null, Unique)
   * slug (String, Not Null, Unique)

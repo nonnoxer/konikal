@@ -1,1 +1,1 @@
-sqlite:///app/database.db
+sqlite:///database.db

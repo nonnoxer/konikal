@@ -3,9 +3,9 @@ from datetime import date as datetime
 
 from flask import Flask, Markup, redirect, render_template, request, session
 from flask_session import Session
-from sqlalchemy import Column, Integer, Sequence, String, create_engine
+from sqlalchemy import Column, ForeignKey, Integer, Sequence, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 
 import config
 
@@ -32,6 +32,9 @@ class User(Base):
     username = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
     elevation = Column(Integer, nullable=False, default=0)
+    
+    posts = relationship("Post")
+    comments = relationship("Comment")
 
 
 class Post(Base):
@@ -39,12 +42,15 @@ class Post(Base):
     id = Column(Integer, Sequence("posts_sequence"), primary_key=True)
     title = Column(String, nullable=False, unique=True)
     slug = Column(String, nullable=False, unique=True)
-    author = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"))
     year = Column(String, nullable=False)
     month = Column(String, nullable=False)
     date = Column(String, nullable=False)
     content = Column(String, nullable=False)
 
+    user = relationship("User", back_populates="posts")
+
+    comments = relationship("Comment")
 
 class Page(Base):
     __tablename__ = "pages"
@@ -54,6 +60,15 @@ class Page(Base):
     precedence = Column(Integer, nullable=False)
     content = Column(String, nullable=False)
 
+class Comment(Base):
+    __tablename__ = "comments"
+    id = Column(Integer, Sequence("comments_sequence"), primary_key=True)
+    content = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    post_id = Column(Integer, ForeignKey("posts.id"))
+    
+    user = relationship("User", back_populates="comments")
+    post = relationship("Post", back_populates="comments")
 
 Base.metadata.create_all(engine)
 
@@ -67,7 +82,7 @@ if (
         Post(
             title="Hello world!",
             slug="hello-world",
-            author="Konikal",
+            user_id=0,
             year=datetime.today().strftime("%Y"),
             month=datetime.today().strftime("%m"),
             date=datetime.today().strftime("%d"),

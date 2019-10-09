@@ -21,31 +21,24 @@ page["login"] = """
 page["signup"] = """
     <h1>Signup</h1>
     <form action="/signup/done" method="POST">
-        <input type="name" name="username" placeholder="Username"><br>
+        <input type="text" name="username" placeholder="Username"><br>
         <input type="password" name="password" placeholder="Password"><br>
+        <input type="name" name="name" placeholder="Name"><br>
         <input type="submit" value="Signup">
     </form>
     """
 page["user"] = """
-    <h1>{user}</h1>
-    <h2>Edit Username</h2>
-    <form action="/editusername/done" method="POST">
-        <input type="text" name="username" value="{user}" readonly hidden>
-        <input type="text" name="new_username" placeholder="New username">
-        <br>
+    <h1>{username}</h1>
+    <h1>Edit user</h1>
+    <form action="/user/{username}/edit/done" method="POST">
+        <input type="text" name="new_username" value="{username}" placeholder="Username"><br>
+        <input type="password" name="password" value="{password}" placeholder="Password"><br>
+        <input type="name" name="name" value="{name}" placeholder="Name"><br>
         <input type="submit" value="Update">
     </form>
-    <h2>Edit Password</h2>
-    <form action="/editpassword/done" method="POST">
-        <input type="text" name="username" value="{user}" readonly hidden>
-        <input type="text" name="password" placeholder="New password">
-        <br>
-        <input type="submit" value="Update">
-    </form>
-    <h2>Delete User</h2>
-    <form action="/deleteuser/done" method="POST">
-        <input type="text" name="username" value="{user}" readonly hidden>
-        <input type="submit" value="Delete">
+    <form action="/user/{username}/delete/done" method="POST">
+        <input type="text" name="username" value="{username}" readonly hidden>
+        <input type="submit" value="Delete user" class="red">
     </form>
     """
 page["posts"] = """
@@ -126,6 +119,7 @@ admin["users_new"] = """
         <input type="range" id="elevationrange" name="elevation" value="0" min="0" max="4"
             onchange="updateelevationvalue()">
         <p id="elevationvalue">0</p>
+        <input type="text" name="name" placeholder="Name"><br>
         <input type="submit" value="Create">
     </form>
     <p><a href="/admin/users">Back</a></p>
@@ -148,7 +142,6 @@ admin["posts_new"] = """
     <form action="/admin/posts/new/done" method="POST" id="editor">
         <input type="text" name="title" placeholder="Title"><br>
         <input type="text" name="slug" placeholder="Slug"><br>
-        <input type="name" name="author" placeholder="Author"><br>
         <input type="date" name="date"><br>
         <div id="editor-container" onkeyup="updatecontent()"></div>
         <textarea form="editor" id="content" name="content" readonly hidden></textarea>

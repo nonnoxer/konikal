@@ -3,7 +3,14 @@ from datetime import date as datetime
 
 from flask import Flask, Markup, redirect, render_template, request, session
 from flask_session import Session
-from sqlalchemy import Column, ForeignKey, Integer, Sequence, String, create_engine
+from sqlalchemy import (
+    Column,
+    ForeignKey,
+    Integer,
+    Sequence,
+    String,
+    create_engine,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, scoped_session, sessionmaker
 
@@ -31,10 +38,23 @@ class User(Base):
     id = Column(Integer, Sequence("users_sequence"), primary_key=True)
     username = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
+    name = Column(String, nullable=False)
     elevation = Column(Integer, nullable=False, default=0)
-    
-    posts = relationship("Post")
-    comments = relationship("Comment")
+    posts = relationship("Post", back_populates="user")
+    comments = relationship("Comment", back_populates="user")
+
+    def __repr__(self):
+        return str(
+            [
+                self.id,
+                self.username,
+                self.password,
+                self.name,
+                self.elevation,
+                self.posts,
+                self.comments,
+            ]
+        )
 
 
 class Post(Base):
@@ -47,10 +67,21 @@ class Post(Base):
     month = Column(String, nullable=False)
     date = Column(String, nullable=False)
     content = Column(String, nullable=False)
-
     user = relationship("User", back_populates="posts")
+    comments = relationship("Comment", back_populates="post")
 
-    comments = relationship("Comment")
+    def __repr__(self):
+        return str(
+            [
+                self.id,
+                self.title,
+                self.slug,
+                "{d}-{m}-{y}".format(d=self.year, m=self.month, y=self.date),
+                self.user.name,
+                self.comments,
+            ]
+        )
+
 
 class Page(Base):
     __tablename__ = "pages"
@@ -60,15 +91,22 @@ class Page(Base):
     precedence = Column(Integer, nullable=False)
     content = Column(String, nullable=False)
 
+    def __repr__(self):
+        return str([self.id, self.title, self.slug, self.precedence])
+
+
 class Comment(Base):
     __tablename__ = "comments"
     id = Column(Integer, Sequence("comments_sequence"), primary_key=True)
     content = Column(String, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"))
     post_id = Column(Integer, ForeignKey("posts.id"))
-    
     user = relationship("User", back_populates="comments")
     post = relationship("Post", back_populates="comments")
+
+    def __repr__(self):
+        return str([self.id, self.user.name, self.post.slug])
+
 
 Base.metadata.create_all(engine)
 
@@ -76,13 +114,18 @@ if (
     db.query(User).all() == []
     and db.query(Post).all() == []
     and db.query(Page).all() == []
+    and db.query(Comment).all() == []
 ):
-    db.add(User(username="admin", password="password", elevation=4))
+    db.add(
+        User(
+            username="admin", password="password", name="Konikal", elevation=4
+        )
+    )
     db.add(
         Post(
             title="Hello world!",
             slug="hello-world",
-            user_id=0,
+            user_id=1,
             year=datetime.today().strftime("%Y"),
             month=datetime.today().strftime("%m"),
             date=datetime.today().strftime("%d"),
@@ -95,6 +138,13 @@ if (
             slug="home",
             precedence="1",
             content="""{"ops":[{"insert":"Welcome to Konikal. This is your home page. Edit or delete it, then start posting!"}]}""",
+        )
+    )
+    db.add(
+        Comment(
+            content="""{"ops":[{"insert":"This is your first comment. Edit or delete it, then start posting!"}]}""",
+            user_id=1,
+            post_id=1,
         )
     )
 db.commit()
@@ -121,7 +171,9 @@ def root():
             "page.html",
             pagebar=Markup(config.pagebar["home"].format(pagebar=pagebar)),
             body=Markup(
-                config.page["page"].format(title=home.title, content=home.content)
+                config.page["page"].format(
+                    title=home.title, content=home.content
+                )
             ),
             custom=config.custom,
         )
@@ -130,7 +182,10 @@ def root():
         posts = (
             db.query(Post)
             .order_by(
-                Post.year.desc(), Post.month.desc(), Post.date.desc(), Post.id.desc()
+                Post.year.desc(),
+                Post.month.desc(),
+                Post.date.desc(),
+                Post.id.desc(),
             )
             .all()
         )
@@ -145,7 +200,7 @@ def root():
                     """.format(
                     title=i.title,
                     slug=i.slug,
-                    author=i.author,
+                    author=i.user.name,
                     year=i.year,
                     month=i.month,
                     date=i.date,
@@ -155,7 +210,9 @@ def root():
         return render_template(
             "page.html",
             pagebar=Markup(config.pagebar["no_home"].format(pagebar=pagebar)),
-            body=Markup(config.page["posts"].format(page="All Posts", body=body)),
+            body=Markup(
+                config.page["posts"].format(page="All Posts", body=body)
+            ),
             custom=config.custom,
         )
 
@@ -178,7 +235,12 @@ def posts():
     body = ""
     posts = (
         db.query(Post)
-        .order_by(Post.year.desc(), Post.month.desc(), Post.date.desc(), Post.id.desc())
+        .order_by(
+            Post.year.desc(),
+            Post.month.desc(),
+            Post.date.desc(),
+            Post.id.desc(),
+        )
         .all()
     )
     pagebar = ""
@@ -203,7 +265,7 @@ def posts():
                 """.format(
                 title=i.title,
                 slug=i.slug,
-                author=i.author,
+                author=i.user.name,
                 year=i.year,
                 month=i.month,
                 date=i.date,
@@ -255,7 +317,7 @@ def posts_year(year):
                 """.format(
                 title=i.title,
                 slug=i.slug,
-                author=i.author,
+                author=i.user.name,
                 year=year,
                 month=i.month,
                 date=i.date,
@@ -307,7 +369,7 @@ def posts_year_month(year, month):
                 """.format(
                 title=i.title,
                 slug=i.slug,
-                author=i.author,
+                author=i.user.name,
                 year=year,
                 month=month,
                 date=i.date,
@@ -363,7 +425,7 @@ def posts_year_month_date(year, month, date):
                 """.format(
                 title=i.title,
                 slug=i.slug,
-                author=i.author,
+                author=i.user.name,
                 year=year,
                 month=month,
                 date=date,
@@ -382,7 +444,9 @@ def posts_year_month_date(year, month, date):
         pagebar=pagebar,
         body=Markup(
             config.page["posts"].format(
-                page="{date}-{month}-{year}".format(date=date, month=month, year=year),
+                page="{date}-{month}-{year}".format(
+                    date=date, month=month, year=year
+                ),
                 body=body,
             )
         ),
@@ -394,7 +458,9 @@ def posts_year_month_date(year, month, date):
 @app.route("/posts/<year>/<month>/<date>/<slug>")
 def posts_year_month_date_slug(year, month, date, slug):
     post = (
-        db.query(Post).filter_by(year=year, month=month, date=date, slug=slug).first()
+        db.query(Post)
+        .filter_by(year=year, month=month, date=date, slug=slug)
+        .first()
     )
     pagebar = ""
     pages = db.query(Page).order_by(Page.precedence.desc()).all()
@@ -424,7 +490,7 @@ def posts_year_month_date_slug(year, month, date, slug):
                     date="""<a href="/posts/{year}/{month}/{date}">{date}</a>-<a href="/posts/{year}/{month}">{month}</a>-<a href="/posts/{year}">{year}</a>""".format(
                         date=date, month=month, year=year
                     ),
-                    author=post.author,
+                    author=post.user.name,
                     content=post.content,
                 )
             ),
@@ -456,15 +522,21 @@ def slug(slug):
         else:
             session["route"] = "/{slug}".format(slug=slug)
             if home is not None:
-                pagebar = Markup(config.pagebar["home"].format(pagebar=pagebar))
+                pagebar = Markup(
+                    config.pagebar["home"].format(pagebar=pagebar)
+                )
             else:
-                pagebar = Markup(config.pagebar["no_home"].format(pagebar=pagebar))
+                pagebar = Markup(
+                    config.pagebar["no_home"].format(pagebar=pagebar)
+                )
             session["route"] = "/{slug}".format(slug=slug)
             return render_template(
                 "page.html",
                 pagebar=pagebar,
                 body=Markup(
-                    config.page["page"].format(title=page.title, content=page.content)
+                    config.page["page"].format(
+                        title=page.title, content=page.content
+                    )
                 ),
                 custom=config.custom,
             )
@@ -508,7 +580,9 @@ def login():
 def login_done():
     username = request.form["username"]
     password = request.form["password"]
-    user = db.query(User).filter_by(username=username, password=password).first()
+    user = (
+        db.query(User).filter_by(username=username, password=password).first()
+    )
     if user is None:
         session["error"] = "alert('Invalid login: Invalid credentials');"
         return redirect("/login")
@@ -554,9 +628,11 @@ def signup():
 def signup_done():
     username = request.form["username"]
     password = request.form["password"]
+    name = request.form["name"]
     users = db.query(User).filter_by(username=username).all()
     if users == []:
-        db.add(User(username=username, password=password))
+        user = User(username=username, password=password, name=name)
+        db.add(user)
         db.commit()
         session["user"] = username
         return redirect("/route")
@@ -595,13 +671,24 @@ def user_username(username):
                 home = db.query(Page).filter_by(slug="home").first()
                 session["route"] = "/user/{username}".format(username=username)
                 if home is not None:
-                    pagebar = Markup(config.pagebar["home"].format(pagebar=pagebar))
+                    pagebar = Markup(
+                        config.pagebar["home"].format(pagebar=pagebar)
+                    )
                 else:
-                    pagebar = Markup(config.pagebar["no_home"].format(pagebar=pagebar))
+                    pagebar = Markup(
+                        config.pagebar["no_home"].format(pagebar=pagebar)
+                    )
+                user = db.query(User).filter_by(username=username).first()
                 return render_template(
                     "page.html",
                     pagebar=pagebar,
-                    body=Markup(config.page["user"].format(user=session["user"])),
+                    body=Markup(
+                        config.page["user"].format(
+                            username=user.username,
+                            password=user.password,
+                            name=user.name,
+                        )
+                    ),
                     custom=config.custom,
                 )
             else:
@@ -619,51 +706,35 @@ def user_username(username):
         return redirect("/route")
 
 
-# Edit username processing
-@app.route("/editusername/done", methods=["POST"])
-def editusername_done():
+# Edit password processing
+@app.route("/user/<username>/edit/done", methods=["POST"])
+def user_username_edit_done(username):
     if "user" in session:
-        username = request.form["username"]
-        new_username = request.form["new_username"]
         if session["user"] == username:
-            user = db.query(User).filter_by(username=new_username).all()
-            if user == []:
-                db.query(User).filter_by(
-                    username=username
-                ).first().username = new_username
-                db.commit()
-                session["user"] = new_username
-                return redirect("/user/" + new_username)
+            new_username = request.form["new_username"]
+            password = request.form["password"]
+            name = request.form["name"]
+            user = db.query(User).filter_by(username=username).first()
+            if db.query(User).filter_by(username=new_username).all() == []:
+                user.username = new_username
             else:
-                session["error"] = "alert('Invalid request: Username taken');"
-                return redirect("/user/" + username)
+                session[
+                    "error"
+                ] = "alert('Username change failed: Username taken');"
+            user.password = password
+            user.name = name
+            db.commit()
+            session["user"] = new_username
+            return redirect("/user/" + new_username)
         else:
             session["error"] = "alert('Invalid request: Invalid user');"
-            return redirect("/route")
-    else:
-        session["error"] = "alert('Invalid request: Not logged in');"
-        return redirect("/route")
-
-
-# Edit password processing
-@app.route("/editpassword/done", methods=["POST"])
-def editpassword_done():
-    if "user" in session:
-        username = request.form["username"]
-        password = request.form["password"]
-        if session["user"] == username:
-            db.query(User).filter_by(username=username).first().password = password
-            db.commit()
-            return redirect("/user/" + username)
-        else:
-            session["error"] = "alert('Invalid request: User does not exist');"
     else:
         session["error"] = "alert('Invalid request: Not logged in');"
 
 
 # Delete user processing
-@app.route("/deleteuser/done", methods=["POST"])
-def deleteuser_done():
+@app.route("/user/<username>/delete/done", methods=["POST"])
+def user_username_delete_done(username):
     if "user" in session:
         username = request.form["username"]
         if session["user"] == username:
@@ -684,7 +755,7 @@ def deleteuser_done():
 def admin_route():
     if "elevation" in session:
         if "admin_route" in session:
-            return redirect("/admin_route")
+            return redirect(session["admin_route"])
         else:
             return redirect("/admin")
     else:
@@ -698,11 +769,15 @@ def admin():
     if "elevation" in session:
         session["admin_route"] = "/admin"
         return render_template(
-            "admin.html", page="Dashboard", display=Markup(config.admin["admin"])
+            "admin.html",
+            page="Dashboard",
+            display=Markup(config.admin["admin"]),
         )
     else:
         return render_template(
-            "admin.html", page="Admin Login", display=Markup(config.admin["login"])
+            "admin.html",
+            page="Admin Login",
+            display=Markup(config.admin["login"]),
         )
 
 
@@ -711,7 +786,9 @@ def admin():
 def admin_login_done():
     username = request.form["username"]
     password = request.form["password"]
-    user = db.query(User).filter_by(username=username, password=password).first()
+    user = (
+        db.query(User).filter_by(username=username, password=password).first()
+    )
     if user is None:
         session["error"] = "alert('Invalid login');"
         return redirect("/admin")
@@ -738,6 +815,7 @@ def admin_users():
                         <th>Username</th>
                         <th>Password</th>
                         <th>Elevation</th>
+                        <th>Name</th>
                         <th></th>
                     </tr>
             """
@@ -748,6 +826,7 @@ def admin_users():
                         <td>{username}</td>
                         <td>{password}</td>
                         <td>{elevation}</td>
+                        <td>{name}</td>
                         <td><a href="/admin/users/{username}">Edit user</a></td>
                     </tr>
                 """.format(
@@ -755,6 +834,7 @@ def admin_users():
                     username=i.username,
                     password=i.password,
                     elevation=i.elevation,
+                    name=i.name,
                 )
             display += "</table>"
         else:
@@ -776,7 +856,9 @@ def admin_users_new():
     if "elevation" in session:
         session["admin_route"] = "/admin/users/new"
         return render_template(
-            "admin.html", page="New User", display=Markup(config.admin["users_new"])
+            "admin.html",
+            page="New User",
+            display=Markup(config.admin["users_new"]),
         )
     else:
         session["error"] = "alert('Invalid request: Elevation required');"
@@ -790,9 +872,17 @@ def admin_users_new_done():
         username = request.form["username"]
         password = request.form["password"]
         elevation = request.form["elevation"]
+        name = request.form["name"]
         users = db.query(User).filter_by(username=username).all()
         if users == []:
-            db.add(User(username=username, password=password, elevation=elevation))
+            db.add(
+                User(
+                    username=username,
+                    password=password,
+                    elevation=elevation,
+                    name=name,
+                )
+            )
             db.commit()
             return redirect("/admin/users")
         else:
@@ -812,21 +902,27 @@ def admin_users_username(username):
             display = """
                 <h1>Edit user</h1>
                 <form action="/admin/users/{username}/edit/done" method="POST">
-                    <input type="name" name="username" value="{username}" readonly hidden>
+                    <input type="text" name="username" value="{username}" readonly hidden>
                     <input type="text" name="new_username" value="{username}" placeholder="Username"><br>
                     <input type="password" name="password" value="{password}" placeholder="Password"><br>
                     <input type="range" id="elevationrange" name="elevation" value="{elevation}" min="0" max="4" onchange="updateelevationvalue()">
                     <p id="elevationvalue">{elevation}</p>
+                    <input type="name" name="name" value="{name}"><br>
                     <input type="submit" value="Update">
                 </form>
                 <form action="/admin/users/{username}/delete/done" method="POST">
-                    <input type="name" name="username" value="{username}" readonly hidden>
+                    <input type="text" name="username" value="{username}" readonly hidden>
                     <input type="submit" value="Delete user" class="red">
                 </form>
                 """.format(
-                username=username, password=user.password, elevation=user.elevation
+                username=username,
+                password=user.password,
+                elevation=user.elevation,
+                name=user.name,
             )
-            session["admin_route"] = "/admin/users/{username}".format(username=username)
+            session["admin_route"] = "/admin/users/{username}".format(
+                username=username
+            )
             return render_template(
                 "admin.html",
                 page=username,
@@ -847,15 +943,21 @@ def admin_users_username_edit_done(username):
         new_username = request.form["new_username"]
         password = request.form["password"]
         elevation = request.form["elevation"]
+        name = request.form["name"]
         user = db.query(User).filter_by(username=username).first()
         if user is not None:
             users = db.query(User).filter_by(username=new_username).all()
             if users == []:
                 user.username = new_username
+                if new_username == session["user"]:
+                    session["user"] = new_username
             else:
-                session["error"] = "alert('Username change failed: Username taken');"
+                session[
+                    "error"
+                ] = "alert('Username change failed: Username taken');"
             user.password = password
             user.elevation = elevation
+            user.name = name
             db.commit()
             return redirect("/admin/users")
         else:
@@ -890,7 +992,10 @@ def admin_posts():
         posts = (
             db.query(Post)
             .order_by(
-                Post.year.desc(), Post.month.desc(), Post.date.desc(), Post.id.desc()
+                Post.year.desc(),
+                Post.month.desc(),
+                Post.date.desc(),
+                Post.id.desc(),
             )
             .all()
         )
@@ -920,7 +1025,7 @@ def admin_posts():
                     id=i.id,
                     title=i.title,
                     slug=i.slug,
-                    author=i.author,
+                    author=i.user.name,
                     date="{d}-{m}-{y}".format(d=i.date, m=i.month, y=i.year),
                 )
             display += "</table>"
@@ -943,7 +1048,9 @@ def admin_posts_new():
     if "elevation" in session:
         session["admin_route"] = "/admin/posts/new"
         return render_template(
-            "admin.html", page="New Post", display=Markup(config.admin["posts_new"])
+            "admin.html",
+            page="New Post",
+            display=Markup(config.admin["posts_new"]),
         )
     else:
         session["error"] = "alert('Invalid request: Elevation required');"
@@ -956,9 +1063,6 @@ def admin_posts_new_done():
     if "elevation" in session:
         title = request.form["title"]
         slug = request.form["slug"]
-        author = request.form["author"]
-        if author == "":
-            author = session["user"]
         date = request.form["date"]
         if date == "":
             today = datetime.today()
@@ -972,7 +1076,10 @@ def admin_posts_new_done():
             Post(
                 title=title,
                 slug=slug,
-                author=author,
+                user_id=db.query(User)
+                .filter_by(username=session["user"])
+                .first()
+                .id,
                 year=year,
                 month=month,
                 date=date,
@@ -998,8 +1105,7 @@ def admin_posts_slug(slug):
                         "><br>
                     <input type="text" name="slug" placeholder="Author" value="{slug}">
                     <br>
-                    <input type="name" name="author" placeholder="Author"
-                        value="{author}"><br>
+                    <p>{author}</p>
                     <input type="date" name="date" value="{date}"><br>
                     <div id="editor-container" onkeyup="updatecontent()"></div>
                     <textarea form="editor" id="content" name="content" readonly
@@ -1013,8 +1119,10 @@ def admin_posts_slug(slug):
                 """.format(
                 title=post.title,
                 slug=post.slug,
-                author=post.author,
-                date="{y}-{m}-{d}".format(y=post.year, m=post.month, d=post.date),
+                author=post.user.name,
+                date="{y}-{m}-{d}".format(
+                    y=post.year, m=post.month, d=post.date
+                ),
                 content=post.content,
             )
             session["admin_route"] = "/admin/posts/{slug}".format(slug=slug)
@@ -1037,9 +1145,6 @@ def admin_posts_slug_edit_done(slug):
     if "elevation" in session:
         title = request.form["title"]
         new_slug = request.form["slug"]
-        author = request.form["author"]
-        if author == "":
-            author = session["user"]
         date = request.form["date"]
         if date == "":
             today = datetime.today()
@@ -1053,7 +1158,6 @@ def admin_posts_slug_edit_done(slug):
         if post is not None:
             post.title = title
             post.slug = new_slug
-            post.author = author
             post.year = year
             post.month = month
             post.date = date
@@ -1111,7 +1215,10 @@ def admin_pages():
                         <td><a href="/admin/pages/{slug}">Edit page</a></td>
                     </tr>
                 """.format(
-                    id=i.id, title=i.title, slug=i.slug, precedence=i.precedence
+                    id=i.id,
+                    title=i.title,
+                    slug=i.slug,
+                    precedence=i.precedence,
                 )
             display += "</table>"
         else:
@@ -1133,7 +1240,9 @@ def admin_pages_new():
     if "elevation" in session:
         session["admin_route"] = "admin/pages/new"
         return render_template(
-            "admin.html", page="New Page", display=Markup(config.admin["pages_new"])
+            "admin.html",
+            page="New Page",
+            display=Markup(config.admin["pages_new"]),
         )
     else:
         session["error"] = "alert('Invalid request: Elevation required');"
@@ -1148,7 +1257,11 @@ def admin_pages_new_done():
         slug = request.form["slug"]
         precedence = request.form["precedence"]
         content = request.form["content"]
-        db.add(Page(title=title, slug=slug, precedence=precedence, content=content))
+        db.add(
+            Page(
+                title=title, slug=slug, precedence=precedence, content=content
+            )
+        )
         db.commit()
         return redirect("/admin/pages")
     else:
@@ -1237,6 +1350,12 @@ def admin_pages_slug_delete_done(slug):
 
 
 ###############################################################################
+
+
+@app.route("/test")
+def test():
+    result = db.query(User).all()
+    return str(result)
 
 
 if __name__ == "__main__":

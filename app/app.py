@@ -228,6 +228,66 @@ def route():
     else:
         return redirect("/")
 
+# Search page
+@app.route("/search", methods=["GET"])
+def search():
+    search = request.args.get("search").lower()
+    session["search"] = search
+    body = ""
+    posts = (
+        db.query(Post)
+        .order_by(
+            Post.year.desc(),
+            Post.month.desc(),
+            Post.date.desc(),
+            Post.id.desc(),
+        )
+        .all()
+    )
+    results = []
+    for i in posts:
+        if i.title.lower().find(search) != -1 or i.title.lower().find(search) != -1:
+            results.append(i)
+    pagebar = ""
+    pages = db.query(Page).order_by(Page.precedence.desc()).all()
+    for i in pages:
+        pagebar += """
+            <li class="nav-item active">
+                <a class="nav-link" href="/{slug}">{title}</a>
+            </li>
+            """.format(
+            title=i.title, slug=i.slug
+        )
+    home = db.query(Page).filter_by(slug="home").first()
+    if posts != []:
+        for i in results:
+            body += """
+                <tr>
+                    <td><a href="/posts/{year}/{month}/{date}/{slug}">{title}</a></td>
+                    <td>By {author}</td>
+                    <td><a href="/posts/{year}/{month}/{date}">{date}</a>-<a href="/posts/{year}/{month}">{month}</a>-<a href="/posts/{year}">{year}</a></td>
+                </tr>
+                """.format(
+                title=i.title,
+                slug=i.slug,
+                author=i.user.name,
+                year=i.year,
+                month=i.month,
+                date=i.date,
+            )
+    else:
+        body = "No posts"
+    if home is not None:
+        pagebar = Markup(config.pagebar["home"].format(pagebar=pagebar))
+    else:
+        pagebar = Markup(config.pagebar["no_home"].format(pagebar=pagebar))
+    session["route"] = "/posts"
+    return render_template(
+        "page.html",
+        pagebar=pagebar,
+        body=Markup(config.page["posts"].format(page="Search: " + search, body=body)),
+        custom=config.custom,
+    )
 
 # All posts page
 @app.route("/posts")
@@ -949,7 +1009,7 @@ def admin_users_username_edit_done(username):
             users = db.query(User).filter_by(username=new_username).all()
             if users == []:
                 user.username = new_username
-                if new_username == session["user"]:
+                if username == session["user"]:
                     session["user"] = new_username
             else:
                 session[
